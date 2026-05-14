@@ -7,7 +7,7 @@ import os
 
 # Load the model
 model_path = os.path.join(os.path.dirname(__file__), "stundent_model.keras")
-model = tf.keras.models.load_model(model_path)
+model = tf.keras.models.load_model(model_path, compile=False)
 
 # Preprocess function (grayscale + resize + equalizeHist)
 def preprocess_image(uploaded_image):
