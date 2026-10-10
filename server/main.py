@@ -119,9 +119,9 @@ def get_model():
 
 
 def preprocess_image(image: Image.Image) -> np.ndarray:
-    """RGB -> 224x224 -> 0-1 -> batch dim. Identical to the original demo."""
+    """RGB -> 224x224 -> float32 in the training range (0-255) -> batch dim."""
     img = image.convert("RGB").resize((224, 224))
-    arr = np.array(img).astype("float32") / 255.0
+    arr = np.array(img).astype("float32")
     return np.expand_dims(arr, axis=0)
 
 
