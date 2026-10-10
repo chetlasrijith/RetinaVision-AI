@@ -110,4 +110,3 @@ README.md                         Project documentation
 ## Author
 
 Srijith Chetla
-1. Dataset Collection
