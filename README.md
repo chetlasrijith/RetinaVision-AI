@@ -14,242 +14,100 @@ The project also includes a custom Next.js + FastAPI web application that allows
 * Deep Learning and Vision Transformer-based models
 * Web application for real-time predictions
 * Large-scale dataset handling (50,000 retinal images)
-* GPU-supported training pipeline
-* End-to-end workflow from preprocessing to deployment
+# RetinaVision AI
 
----
+RetinaVision AI is a retinal fundus image classification project. Upload a JPG, JPEG, or PNG image to the web app to preview it, run the bundled model, and view the predicted category with a ranked score breakdown.
 
-## Diseases Detected
+**Live app:** [retina-vision-ai.vercel.app](https://retina-vision-ai.vercel.app/)
 
-The model is trained to classify the following categories:
+![RetinaVision AI showing a retinal image upload and classification result](result.png)
 
-* Age-Related Macular Degeneration (AMD)
-* Cataract
-* Diabetic Retinopathy (DR)
-* Glaucoma
-* Pathological Myopia
-* Normal Fundus
+The application is built with a Next.js frontend and a FastAPI inference service. The API preprocesses the uploaded image and runs a seven-class Keras model. The repository also contains Jupyter notebooks for the model development and experimentation workflows.
 
----
+> **Important:** This is an educational AI classification demo, not a medical device or diagnosis. Model scores are not a substitute for clinical evaluation. Consult a qualified eye-care professional about retinal images or health concerns.
 
-## Dataset
+## Classification categories
 
-The project uses the Retinal Fundus Image Dataset containing approximately 50,000 retinal images across multiple disease classes.
+- Age-related macular degeneration (AMD)
+- Cataract
+- Diabetic retinopathy (DR)
+- Glaucoma
+- Hypertensive retinopathy
+- Normal fundus
+- Pathological myopia
 
-### Dataset Highlights
+## How it works
 
-* Multi-class classification dataset
-* High-resolution retinal fundus images
-* Suitable for computer vision and medical imaging tasks
+1. Select or drag in a retinal fundus image.
+2. Review the preview and choose **Analyze image**.
+3. The frontend sends the image to the FastAPI service.
+4. The service resizes the image to 224 x 224, applies the model's expected preprocessing, and returns the predicted class and ranked scores.
 
-Dataset Source:
+The API provides `GET /health`, `GET /classes`, and `POST /predict` endpoints. The prediction endpoint accepts an image as multipart form data under the field name `file`.
 
-* Kaggle Retinal Fundus Image Dataset
+## Technology
 
----
+- **Frontend:** Next.js 14, React 18, TypeScript
+- **API:** FastAPI and Uvicorn
+- **Model:** TensorFlow/Keras, with the bundled `server/stundent_model.keras` model
+- **Research notebooks:** CNN, Vision Transformer, and knowledge-distillation experiments in `Final Code/`
 
-## Tech Stack
+## Run locally
 
-### Languages
-
-* Python
-
-### Libraries & Frameworks
-
-* TensorFlow
-* Keras
-* FastAPI + Uvicorn
-* Next.js + React
-* OpenCV
-* NumPy
-* Pandas
-* Matplotlib
-* Scikit-learn
-* Next.js
-
-### Concepts Used
-
-* Deep Learning
-* Computer Vision
-* Transfer Learning
-* Vision Transformers
-* Image Classification
-* Model Deployment
-
----
-
-## Project Structure
+Use Python 3.11 for the backend. From the repository root:
 
 ```bash
-Eye-Disease-Detection/
-│
-├── web/                  # Next.js + React frontend
-│   ├── app/              # App Router pages + theme styles
-│   └── lib/              # API client
-│
-├── server/               # FastAPI inference server
-│   ├── main.py           # /health, /classes, /predict
-│   ├── requirements.txt
-│   └── stundent_model.keras
-│
-├── Final Code/
-│   ├── AMD/
-│   ├── Cataract/
-│   ├── DR/
-│   ├── Glaucoma/
-│   ├── Pathological Myopia/
-│   └── Vision Transformer Combine/
-│
-├── README.md
-└── theme.md
+python -m venv .venv
 ```
 
----
-
-## Model Training Workflow
-
-### Steps Involved
-
-1. Dataset Collection
-2. Image Preprocessing
-3. Data Augmentation
-4. Model Building
-5. Model Training
-6. Model Evaluation
-7. Model Saving
-8. Deployment using Next.js + FastAPI
-
----
-
-## Image Preprocessing
-
-The following preprocessing techniques were used:
-
-* Image resizing
-* Normalization
-* Data augmentation
-* Noise reduction
-* Train-test split
-
----
-
-## Model Architecture
-
-The project uses Deep Learning models including:
-
-* Convolutional Neural Networks (CNNs)
-* Transfer Learning models
-* Vision Transformer (ViT)
-
-The Vision Transformer model was used to improve multi-class disease classification performance and capture complex image patterns from retinal scans.
-
----
-
-## Performance Metrics
-
-The models were evaluated using:
-
-* Accuracy
-* Precision
-* Recall
-* F1-Score
-* Confusion Matrix
-
----
-
-## Web Application (Next.js + FastAPI)
-
-The project includes a custom web app (no Streamlit): a Next.js/React frontend
-in `web/` and a FastAPI inference server in `server/` that serves the bundled
-Keras model locally.
-
-Upload a retinal fundus image → preview it → **Analyze image** → see the
-predicted class plus a ranked score breakdown. Results carry a “not a medical
-diagnosis” notice.
-
-### Run the backend
+Activate the environment, then install and start the API:
 
 ```bash
-# Python 3.11 recommended (matches tensorflow==2.15.0)
-pip install -r server/requirements.txt
-uvicorn server.main:app --host 0.0.0.0 --port 8000
-# or: python server/main.py
+python -m pip install -r server/requirements.txt
+python -m uvicorn server.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-API endpoints: `GET /health`, `GET /classes`, `POST /predict` (multipart `file`).
-
-### Run the frontend
+In a second terminal, start the frontend:
 
 ```bash
 cd web
 npm install
-npm run dev   # http://localhost:3000
+npm run dev
 ```
 
-In development, `/api/*` is proxied to the backend (override with `BACKEND_URL`
-for the server or `NEXT_PUBLIC_API_URL` for the browser — see
-`web/.env.example`). For production: `npm run build && npm start`.
+Open [http://localhost:3000](http://localhost:3000). In development, the Next.js rewrite proxies `/api/*` to `http://localhost:8000`. Configure `BACKEND_URL` to change the API target; see [`web/.env.example`](web/.env.example).
 
-> The demo model (`server/stundent_model.keras`) is bundled with the repo and
-> loaded locally — no downloads or retraining needed.
+## Deploy
 
----
+The deployed application uses separate Vercel and Render services:
 
-## Installation
+### Render API
 
-### Clone the Repository
+- **Root Directory:** `server`
+- **Build Command:** `pip install -r requirements.txt`
+- **Start Command:** `python -m uvicorn main:app --host 0.0.0.0 --port $PORT`
+- **Python version:** 3.11 (for example, set `PYTHON_VERSION` to `3.11.11`)
 
-```bash
-git clone <repository-link>
-cd Eye-Disease-Detection
+Keep `stundent_model.keras` in the `server/` directory so the API can load it.
+
+### Vercel frontend
+
+- **Root Directory:** `web`
+- **Environment variable:** `BACKEND_URL` set to the Render service origin, for example `https://your-api.onrender.com` (no trailing slash).
+- `NEXT_PUBLIC_API_URL` defaults to `/api`; the frontend uses that path with its Next.js rewrite to reach the Render API.
+
+## Repository layout
+
+```text
+web/                              Next.js frontend
+server/                           FastAPI API, requirements, and Keras model
+Final Code/                       Model development and experimentation notebooks
+result.png                        Application screenshot
+theme.md                          Frontend visual theme reference
+README.md                         Project documentation
 ```
-
-### Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## Running the Notebooks
-
-### Using Google Colab
-
-1. Open the notebook file
-2. Enable GPU runtime
-3. Run all cells
-4. Train or test the model
-
-The trained `.keras` model files will be saved automatically.
-
----
-
-## Future Improvements
-
-* Improve model accuracy using advanced architectures
-* Add explainable AI (XAI) visualizations
-* Deploy using cloud platforms
-* Support additional eye diseases
-* Optimize inference speed for real-time clinical use
-
----
-
-## Applications
-
-* Early detection of eye diseases
-* AI-assisted medical diagnosis
-* Healthcare screening systems
-* Clinical decision support systems
-
----
-
-## Conclusion
-
-This project demonstrates the application of Deep Learning and Computer Vision in the healthcare domain for automated eye disease detection. By combining advanced neural network architectures with an interactive deployment platform, the system provides an efficient and scalable solution for retinal disease classification.
-
----
 
 ## Author
 
 Srijith Chetla
+1. Dataset Collection
