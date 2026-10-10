@@ -4,7 +4,7 @@
 
 Eye Disease Detection is a Deep Learning-based computer vision project developed to identify multiple eye diseases from retinal fundus images. The system uses Convolutional Neural Networks (CNNs) and Vision Transformer models to classify retinal scans into different disease categories with high accuracy.
 
-The project also includes a Streamlit-based web application that allows users to upload retinal fundus images and receive real-time disease predictions.
+The project also includes a custom Next.js + FastAPI web application that allows users to upload retinal fundus images and receive real-time disease predictions.
 
 ---
 
@@ -12,7 +12,7 @@ The project also includes a Streamlit-based web application that allows users to
 
 * Detection of multiple eye diseases from retinal images
 * Deep Learning and Vision Transformer-based models
-* Streamlit web application for real-time predictions
+* Web application for real-time predictions
 * Large-scale dataset handling (50,000 retinal images)
 * GPU-supported training pipeline
 * End-to-end workflow from preprocessing to deployment
@@ -58,12 +58,14 @@ Dataset Source:
 
 * TensorFlow
 * Keras
+* FastAPI + Uvicorn
+* Next.js + React
 * OpenCV
 * NumPy
 * Pandas
 * Matplotlib
 * Scikit-learn
-* Streamlit
+* Next.js
 
 ### Concepts Used
 
@@ -81,10 +83,14 @@ Dataset Source:
 ```bash
 Eye-Disease-Detection/
 │
-├── Demo App/
-│   ├── eye_disease_detection.py
+├── web/                  # Next.js + React frontend
+│   ├── app/              # App Router pages + theme styles
+│   └── lib/              # API client
+│
+├── server/               # FastAPI inference server
+│   ├── main.py           # /health, /classes, /predict
 │   ├── requirements.txt
-│   └── model files
+│   └── stundent_model.keras
 │
 ├── Final Code/
 │   ├── AMD/
@@ -95,7 +101,7 @@ Eye-Disease-Detection/
 │   └── Vision Transformer Combine/
 │
 ├── README.md
-└── requirements.txt
+└── theme.md
 ```
 
 ---
@@ -111,7 +117,7 @@ Eye-Disease-Detection/
 5. Model Training
 6. Model Evaluation
 7. Model Saving
-8. Deployment using Streamlit
+8. Deployment using Next.js + FastAPI
 
 ---
 
@@ -151,19 +157,41 @@ The models were evaluated using:
 
 ---
 
-## Streamlit Web Application
+## Web Application (Next.js + FastAPI)
 
-The project includes a user-friendly web application where users can:
+The project includes a custom web app (no Streamlit): a Next.js/React frontend
+in `web/` and a FastAPI inference server in `server/` that serves the bundled
+Keras model locally.
 
-* Upload retinal fundus images
-* Predict eye diseases in real-time
-* View prediction results instantly
+Upload a retinal fundus image → preview it → **Analyze image** → see the
+predicted class plus a ranked score breakdown. Results carry a “not a medical
+diagnosis” notice.
 
-### Run the Application Locally
+### Run the backend
 
 ```bash
-streamlit run eye_disease_detection.py
+# Python 3.11 recommended (matches tensorflow==2.15.0)
+pip install -r server/requirements.txt
+uvicorn server.main:app --host 0.0.0.0 --port 8000
+# or: python server/main.py
 ```
+
+API endpoints: `GET /health`, `GET /classes`, `POST /predict` (multipart `file`).
+
+### Run the frontend
+
+```bash
+cd web
+npm install
+npm run dev   # http://localhost:3000
+```
+
+In development, `/api/*` is proxied to the backend (override with `BACKEND_URL`
+for the server or `NEXT_PUBLIC_API_URL` for the browser — see
+`web/.env.example`). For production: `npm run build && npm start`.
+
+> The demo model (`server/stundent_model.keras`) is bundled with the repo and
+> loaded locally — no downloads or retraining needed.
 
 ---
 

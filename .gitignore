@@ -1,0 +1,62 @@
+# ---- Node / Next.js ----
+node_modules/
+web/node_modules/
+.next/
+web/.next/
+out/
+web/out/
+*.tsbuildinfo
+web/.env
+web/.env.local
+web/.env.*.local
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.venv/
+venv/
+env/
+.env
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ---- Local secrets ----
+server/.env
+
+# ---- Data, models outputs & large artifacts (keep the bundled demo model) ----
+*.zip
+*.tar.gz
+*.csv
+*.tsv
+datasets/
+data/
+runs/
+logs/
+checkpoints/
+*.ckpt
+*.h5
+*.hdf5
+lightning_logs/
+mlruns/
+
+# The demo needs this file — never ignore it:
+!server/stundent_model.keras
+
+# ---- Notebooks & OS ----
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.bak
+
+# ---- IDE ----
+.idea/
+.vscode/
+*.swp
+*.swo
